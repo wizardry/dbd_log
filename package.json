@@ -1,0 +1,58 @@
+{
+  "name": "dbd-log",
+  "private": true,
+  "description": "Boilerplate for frontend internship.",
+  "scripts": {
+    "dev": "webpack-serve ./webpack.config.js",
+    "build": "webpack --mode=production",
+    "lint": "eslint --ext .js --ignore-path .gitignore .",
+    "lint:fix": "eslint --ext .js --ignore-path .gitignore . --fix",
+    "test": "jest --reporters jest-nyan-reporter",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wizardry/dbd_log.git"
+  },
+  "author": "wizardry",
+  "license": "",
+  "dependencies": {
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.49",
+    "@vue/test-utils": "^1.0.0-beta.16",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.3",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-env": "^1.7.0",
+    "css-loader": "^0.28.11",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-import-resolver-alias": "^1.1.0",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-vue": "^4.5.0",
+    "jest": "^23.1.0",
+    "jest-nyan-reporter": "^1.0.2",
+    "node-sass": "^4.9.0",
+    "postcss-sass": "^0.3.2",
+    "postcss-syntax": "^0.26.1",
+    "prettier": "^1.13.4",
+    "sass-loader": "^7.0.2",
+    "style-loader": "^0.21.0",
+    "stylelint": "^8.3.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-scss": "^3.1.0",
+    "stylelint-webpack-plugin": "^0.10.5",
+    "vue-jest": "^2.6.0",
+    "vue-loader": "^15.2.4",
+    "vue-template-compiler": "^2.5.16",
+    "webpack": "^4.10.2",
+    "webpack-cli": "^3.0.0",
+    "webpack-serve": "^1.0.2"
+  }
+}
