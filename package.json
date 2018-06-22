@@ -1,7 +1,5 @@
 {
   "name": "dbd-log",
-  "private": true,
-  "description": "Boilerplate for frontend internship.",
   "scripts": {
     "dev": "webpack-serve ./webpack.config.js",
     "build": "webpack --mode=production",
@@ -17,6 +15,7 @@
   "author": "wizardry",
   "license": "",
   "dependencies": {
+    "vuex": "^3.0.1",
     "vue": "^2.5.16"
   },
   "devDependencies": {
@@ -36,6 +35,7 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-vue": "^4.5.0",
+    "hoek": "^5.0.3",
     "jest": "^23.1.0",
     "jest-nyan-reporter": "^1.0.2",
     "node-sass": "^4.9.0",
@@ -48,8 +48,10 @@
     "stylelint-config-standard": "^18.2.0",
     "stylelint-scss": "^3.1.0",
     "stylelint-webpack-plugin": "^0.10.5",
+    "tunnel-agent": "^0.6.0",
     "vue-jest": "^2.6.0",
     "vue-loader": "^15.2.4",
+    "vue-material": "^1.0.0-beta-10.2",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.10.2",
     "webpack-cli": "^3.0.0",

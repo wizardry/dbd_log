@@ -33,8 +33,9 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-          },
-          {
+          },{
+            loader: 'style-loader',
+          },{
             loader: 'eslint-loader',
             options: {
               fix: false,
@@ -46,6 +47,10 @@ module.exports = {
       {
         test: /\.scss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
       {
         enforce: 'pre',

@@ -40,8 +40,13 @@ module.exports = {
     'consistent-return': ['off'],
     'no-console': ['error', { allow: ['warn', 'error'] }],
     'max-len': ['error', { code: 80, ignoreUrls: true }],
-  },
 
+    'import/no-extraneous-dependencies': ['error', {
+      devDependencies: true, // devDependenciesのimportを許可
+      optionalDependencies: false,
+    }],
+
+  },
   // setting for test files
   overrides: [
     {
