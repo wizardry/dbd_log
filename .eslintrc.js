@@ -38,7 +38,7 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'arrow-parens': ['error', 'as-needed'],
     'consistent-return': ['off'],
-    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-console': ['off'],
     'max-len': ['error', { code: 80, ignoreUrls: true }],
 
     'import/no-extraneous-dependencies': ['error', {

@@ -14,6 +14,7 @@ module.exports = {
     extensions: ['.js'],
     alias: {
       '~': path.join(__dirname, 'src/'),
+      'vue$': path.join(__dirname, 'node_modules/vue/dist/vue.esm.js'),
       'vue-material': path.join(__dirname, 'node_modules/vue-material'),
     },
   },
