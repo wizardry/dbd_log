@@ -24,6 +24,9 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'app-header',
+  data() {
+    return {};
+  },
   computed: {
     type() {
       if(!this.$store.state.settings.mode) {
@@ -32,11 +35,15 @@ export default {
 
       return this.$store.state.settings.mode
     },
+    ...mapState('settings', {
+      mode: (state) => state.mode,
+    }),
   },
   methods: {
     changeType(type) {
-      console.log(type)
       this.$store.dispatch('settings/changeMode', type);
+      console.log(this.$store.state.settings.mode, this.mode)
+      // this.$store.commit('settings/change_mode', type);
     }
   }
 };

@@ -6,26 +6,32 @@ import mockCharactors from '~/api/mock/charactors';
 import mockParks from '~/api/mock/parks';
 
 const SETTINGS_MUTATIONS_TYPE = {
-  FETCH_SETTINGS: 'fetch_settings',
-  CHANGE_MODE: 'change_mode11',
+  FETCH_SETTINGS: 'fetch',
+  CHANGE_MODE: 'change_mode',
 };
 
 const settings = {
   namespaced: true,
-  state: {},
+  state: {
+    mode: '',
+    settings: {},
+    user: {},
+  },
   mutations: {
     [SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS](state, value) {
+      state.mode = value.mode;
+      state.settings = value.settings;
+      state.user = value.user;
       console.log(state, value)
-      state = value;
     },
     [SETTINGS_MUTATIONS_TYPE.CHANGE_MODE](state, value) {
-      console.log(state, value)
       state.mode = value;
     },
   },
   actions: {
     initialize({ commit }) {
       const data = mockSettings;
+      console.log('initialize', data);
       commit(SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS, data.app);
     },
     changeMode({ commit, state }, value) {
@@ -37,7 +43,7 @@ const settings = {
 };
 
 const CHARACTORS_MUTATIONS_TYPE = {
-  FETCH_CHARACTORS: 'fetch_charactors',
+  FETCH_CHARACTORS: 'charactors/fetch_charactors',
 };
 const charactors = {
   namespaced: true,
@@ -57,7 +63,7 @@ const charactors = {
 };
 
 const PRAKS_MUTATIONS_TYPE = {
-  FETCH_PARKS: 'fetch_parks',
+  FETCH_PARKS: 'parks/fetch_parks',
 };
 const parks = {
   namespaced: true,
@@ -77,7 +83,7 @@ const parks = {
 };
 
 const RESULTS_MUTATIONS_TYPE = {
-  FETCH_RESULTS: 'fetch_results',
+  FETCH_RESULTS: 'results/fetch_results',
 };
 const results = {
   namespaced: true,
