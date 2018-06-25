@@ -4,6 +4,7 @@
   ],
   "extends": "stylelint-config-standard",
   "rules": {
-    "scss/dollar-variable-colon-space-after": "always"
+    "scss/dollar-variable-colon-space-after": "always",
+    "no-eol-whitespace": null
   }
 }

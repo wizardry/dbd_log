@@ -11,8 +11,10 @@ module.exports = {
     ecmaVersion: 2017,
     sourceType: 'module',
   },
-  extends: ['prettier', 'airbnb-base', 'plugin:vue/recommended'],
-  plugins: ['prettier'],
+//  extends: ['prettier', 'airbnb-base', 'plugin:vue/recommended'],
+//  plugins: ['prettier'],
+  extends: ['airbnb-base', 'plugin:vue/recommended'],
+  plugins: [],
   settings: {
     'import/resolver': {
       alias: {
@@ -23,6 +25,7 @@ module.exports = {
   },
   // add your custom rules here
   rules: {
+/*
     'prettier/prettier': [
       'error',
       {
@@ -31,22 +34,18 @@ module.exports = {
         semi: true,
       },
     ],
-
+*/
     semi: ['off'], // prettier does this
     'function-paren-newline': ['off'], // prettier does this
     'comma-dangle': ['off'], // prettier does this
-    'no-param-reassign': ['error', { props: false }],
+    'no-param-reassign': ['off'],
     'arrow-parens': ['error', 'as-needed'],
     'consistent-return': ['off'],
     'no-console': ['off'],
     'max-len': ['error', { code: 80, ignoreUrls: true }],
-
-    'import/no-extraneous-dependencies': ['error', {
-      devDependencies: true, // devDependenciesのimportを許可
-      optionalDependencies: false,
-    }],
-
+    'no-eol-whitespace': ['off'],
   },
+
   // setting for test files
   overrides: [
     {

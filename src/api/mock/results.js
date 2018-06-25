@@ -1,4 +1,4 @@
-sexport defualt {
+export default {
   results: [{
     id: 0,
     sort_id: 0,
@@ -33,14 +33,12 @@ sexport defualt {
       player_3: 1,
       player_4: 0,
     },
-    status: 'escape'
+    status: 'escape',
     fixed_generators: 5,
     played_user: {
       rank: 20,
       pip: 2,
     },
     comment: 'キャンプなし',
-  },{
-
-  }]
+  }],
 };

@@ -1,5 +1,7 @@
 {
-  "name": "dbd-log",
+  "name": "frontend-intern-boilerplate",
+  "private": true,
+  "description": "Boilerplate for frontend internship.",
   "scripts": {
     "dev": "webpack-serve ./webpack.config.js",
     "build": "webpack --mode=production",
@@ -10,13 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/wizardry/dbd_log.git"
+    "url": "git+ssh://git@github.com/RettyInc/frontend-intern-boilerplate.git"
   },
-  "author": "wizardry",
-  "license": "",
+  "author": "Ryota Yamamoto",
+  "license": "ISC",
   "dependencies": {
-    "vuex": "^3.0.1",
-    "vue": "^2.5.16"
+    "vue": "^2.5.16",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.49",
@@ -35,7 +37,6 @@
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-vue": "^4.5.0",
-    "hoek": "^5.0.3",
     "jest": "^23.1.0",
     "jest-nyan-reporter": "^1.0.2",
     "node-sass": "^4.9.0",
@@ -48,12 +49,9 @@
     "stylelint-config-standard": "^18.2.0",
     "stylelint-scss": "^3.1.0",
     "stylelint-webpack-plugin": "^0.10.5",
-    "tunnel-agent": "^0.6.0",
     "vue-jest": "^2.6.0",
     "vue-loader": "^15.2.4",
-    "vue-material": "^1.0.0-beta-10.2",
     "vue-template-compiler": "^2.5.16",
-    "vueify": "^9.4.1",
     "webpack": "^4.10.2",
     "webpack-cli": "^3.0.0",
     "webpack-serve": "^1.0.2"

@@ -1,15 +1,31 @@
 <template>
   <div>
-    <md-toolbar class="md-primary">
-      <h1>dead by daylight Log</h1>
-    </md-toolbar>
-    <div class="appWrap"></div>
+    <app-header/>
+    <div class="appWrap">{{ message }}</div>
+    <app-content/>
+    <app-footer/>
   </div>
 </template>
 
 <script>
+import AppHeader from './AppHeader.vue'
+import AppContent from './AppContent.vue'
+import AppFooter from './AppFooter.vue'
+
 export default {
-  name: 'App'
+  components: {
+    AppHeader,
+    AppContent,
+    AppFooter,
+  },
+  data() {
+    return {
+      message: 'hogehgoge',
+    };
+  },
+  mounted() {
+    this.$store.dispatch('settings/initialize');
+  }
 };
 </script>
 

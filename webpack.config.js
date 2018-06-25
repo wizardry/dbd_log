@@ -14,8 +14,6 @@ module.exports = {
     extensions: ['.js'],
     alias: {
       '~': path.join(__dirname, 'src/'),
-      'vue$': path.join(__dirname, 'node_modules/vue/dist/vue.esm.js'),
-      'vue-material': path.join(__dirname, 'node_modules/vue-material'),
     },
   },
   module: {
@@ -31,13 +29,12 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/,/mock/],
         use: [
           {
             loader: 'babel-loader',
-          },{
-            loader: 'style-loader',
-          },{
+          },
+          {
             loader: 'eslint-loader',
             options: {
               fix: false,
@@ -49,16 +46,6 @@ module.exports = {
       {
         test: /\.scss$/,
         use: ['style-loader', 'css-loader', 'sass-loader'],
-      },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        loader: 'eslint-loader',
-        exclude: /(node_modules)/,
       },
     ],
   },
