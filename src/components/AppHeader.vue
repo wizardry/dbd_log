@@ -35,9 +35,6 @@ export default {
 
       return this.$store.state.settings.mode
     },
-    ...mapState('settings', {
-      mode: (state) => state.mode,
-    }),
   },
   methods: {
     changeType(type) {
@@ -53,7 +50,7 @@ export default {
 .headerWrap {
   background: #616161;
   border-top: 1px solid #666;
-  
+
   h1 {
     margin: 0;
     font-size: 14px;
@@ -66,12 +63,12 @@ export default {
     padding: 0;
     list-style: none;
     display: flex;
-    
+
     li {
       flex: 1 1;
       justify-content: space-around;
       text-align: center;
-      
+
       button {
         width: 95%;
       }

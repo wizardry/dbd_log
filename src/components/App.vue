@@ -25,6 +25,9 @@ export default {
   },
   mounted() {
     this.$store.dispatch('settings/initialize');
+    this.$store.dispatch('parks/initialize');
+    this.$store.dispatch('charactors/initialize');
+    this.$store.dispatch('results/initialize');
   }
 };
 </script>

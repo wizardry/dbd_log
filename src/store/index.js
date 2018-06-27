@@ -43,14 +43,16 @@ const settings = {
 };
 
 const CHARACTORS_MUTATIONS_TYPE = {
-  FETCH_CHARACTORS: 'charactors/fetch_charactors',
+  FETCH_CHARACTORS: 'fetch',
 };
 const charactors = {
   namespaced: true,
-  state: {},
+  state: {
+    data: [],
+  },
   mutations: {
     [CHARACTORS_MUTATIONS_TYPE.FETCH_CHARACTORS](state, value) {
-      state = value.charactors;
+      state.data = value.charactors;
     },
   },
   actions: {
@@ -59,18 +61,23 @@ const charactors = {
       commit(CHARACTORS_MUTATIONS_TYPE.FETCH_CHARACTORS, data);
     },
   },
-  getters: {},
+  getters: {
+    getCharactor: state => charactorId =>
+      state.data.find(r => r.id === charactorId),
+  },
 };
 
 const PRAKS_MUTATIONS_TYPE = {
-  FETCH_PARKS: 'parks/fetch_parks',
+  FETCH_PARKS: 'fetch',
 };
 const parks = {
   namespaced: true,
-  state: {},
+  state: {
+    data: []
+  },
   mutations: {
     [PRAKS_MUTATIONS_TYPE.FETCH_PARKS](state, value) {
-      state = value.parks;
+      state.data = value.parks;
     },
   },
   actions: {
@@ -83,14 +90,17 @@ const parks = {
 };
 
 const RESULTS_MUTATIONS_TYPE = {
-  FETCH_RESULTS: 'results/fetch_results',
+  FETCH_RESULTS: 'fetch',
 };
 const results = {
   namespaced: true,
-  state: {},
+  state: {
+    data: [],
+  },
   mutations: {
     [RESULTS_MUTATIONS_TYPE.FETCH_RESULTS](state, value) {
-      state = value.results;
+      console.log(value.results);
+      state.data = value.results;
     },
   },
   actions: {
@@ -99,7 +109,51 @@ const results = {
       commit(RESULTS_MUTATIONS_TYPE.FETCH_RESULTS, data);
     },
   },
-  getters: {},
+  getters: {
+    getResult: state => resultId => state.data.find(r => r.id === resultId),
+    getCharactor: (state, getter, rootState, rootGetter) => resultId => {
+      const result = getter.getResult(resultId);
+      return rootGetter['charactors/getCharactor'](result.charactor_id);
+    },
+    getPark: (state, getter, rootState) => parkId =>
+      rootState.parks.data.find(park => park.id === parkId),
+    getObtainPip: (state, getter) => resultId => {
+      const result = getter.getResult(resultId);
+      console.log(result, result.emblems)
+      if (!result.emblems) {
+        return 0;
+      }
+
+      let emblemScore = 0;
+      Object.keys(result.emblems).forEach(emblem => {
+        if (result.emblems[emblem] == null) {
+          return;
+        }
+        emblemScore += result.emblems[emblem];
+      });
+
+      console.log(
+        emblemScore,
+        emblemScore <= 5,
+        emblemScore <= 8,
+        emblemScore <= 13,
+        emblemScore <= 16
+      );
+
+      if (emblemScore <= 5) {
+        return -1;
+      } else if (emblemScore <= 8) {
+        return 0;
+      } else if (emblemScore <= 13) {
+        return 1;
+      } else if (emblemScore <= 16) {
+        return 2;
+      }
+
+      console.error('getObtainPip error');
+      return 0;
+    }
+  },
 };
 
 Vue.use(Vuex);
