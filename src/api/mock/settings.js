@@ -1,6 +1,6 @@
 export default {
   app: {
-    mode: 'list',
+    mode: 'edit/0',
     settings: {
       default_type: 'killer',
     },

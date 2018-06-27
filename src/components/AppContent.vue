@@ -26,19 +26,20 @@ export default {
     Settings,
   },
   computed: {
+    mode() {
+      return this.$store.state.settings.mode.split('/')[0]
+    },
     renderList() {
-
-      return this.$store.state.settings.mode == 'list';
+      return this.mode === 'list';
     },
     renderEdit() {
-      return this.$store.state.settings.mode == 'edit';
+      return this.mode === 'edit';
     },
     renderSetting() {
-      return this.$store.state.settings.mode == 'setting';
+      return this.mode === 'setting';
     },
   },
   mounted() {
-    console.log('appContent', this.$store.state.settings.mode);
   },
 };
 </script>

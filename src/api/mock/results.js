@@ -1,7 +1,6 @@
 export default {
   results: [{
     id: 0,
-    sort_id: 0,
     created: '2017-01-01',
     update: '2018-01-03',
     date: '2018-01-02',

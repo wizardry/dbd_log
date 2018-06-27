@@ -39,8 +39,6 @@ export default {
   methods: {
     changeType(type) {
       this.$store.dispatch('settings/changeMode', type);
-      console.log(this.$store.state.settings.mode, this.mode)
-      // this.$store.commit('settings/change_mode', type);
     }
   }
 };

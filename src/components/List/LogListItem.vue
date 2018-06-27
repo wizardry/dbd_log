@@ -1,5 +1,11 @@
 <template>
-  <li @click="toEditMode(result.id)">
+  <li>
+    <button @click="onClickDelete()">
+      削除
+    </button>
+    <button @click="onClickToEditMode()">
+      詳細をみる
+    </button>
     <div>
       type: {{ charactor.type }}
     </div>
@@ -30,17 +36,21 @@ export default {
   },
   name: 'log-list-item',
   methods: {
-    toEditMode(resultId) {
-      console.log('toEdit')
+    onClickToEditMode() {
+      this.$store.dispatch('settings/changeMode', `edit/${this.result.id}`);
     },
+
+    onClickDelete() {
+      this.$store.dispatch('settings/delete', this.result.id);
+    }
+
   },
   computed: {
     pipCount() {
       return this.$store.getters['results/getObtainPip'](this.result.id);
     },
     charactor() {
-      console.log(this.$store.getters['results/getCharactor'](this.result.id))
-      return this.$store.getters['results/getCharactor'](this.result.id);
+      return this.$store.getters['charactors/getCharactor'](this.result.charactor_id);
     },
     isKiller() {
       return this.charactor.type === 'killer';
@@ -50,7 +60,6 @@ export default {
     },
   },
   mounted() {
-    console.log(this.result);
   },
 };
 </script>

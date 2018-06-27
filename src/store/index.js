@@ -39,7 +39,11 @@ const settings = {
       localStorage.setItem('settings', JSON.stringify(state));
     },
   },
-  getters: {},
+  getters: {
+    getMode: state => state.mode.split('/')[0],
+
+    getModeId: state => state.mode.split('/')[1],
+  },
 };
 
 const CHARACTORS_MUTATIONS_TYPE = {
@@ -86,11 +90,16 @@ const parks = {
       commit(PRAKS_MUTATIONS_TYPE.FETCH_PARKS, data);
     },
   },
-  getters: {},
+  getters: {
+    getPark: state => parkId =>
+      state.data.find(r => r.id === parkId),
+  },
 };
 
 const RESULTS_MUTATIONS_TYPE = {
   FETCH_RESULTS: 'fetch',
+  DELETE: 'delete',
+  UPDATE: 'update',
 };
 const results = {
   namespaced: true,
@@ -99,8 +108,13 @@ const results = {
   },
   mutations: {
     [RESULTS_MUTATIONS_TYPE.FETCH_RESULTS](state, value) {
-      console.log(value.results);
       state.data = value.results;
+    },
+    [SETTINGS_MUTATIONS_TYPE.DELETE](state, value) {
+      state.mode = value;
+    },
+    [SETTINGS_MUTATIONS_TYPE.UPDATE](state, value) {
+      state.mode = value;
     },
   },
   actions: {
@@ -108,37 +122,41 @@ const results = {
       const data = mockResults;
       commit(RESULTS_MUTATIONS_TYPE.FETCH_RESULTS, data);
     },
+
+    delete({ commit, state }, value) {
+      commit(SETTINGS_MUTATIONS_TYPE.DELETE, value);
+      localStorage.setItem('results', JSON.stringify(state.data));
+    },
+
+    update({ commit, state }, value) {
+      commit(SETTINGS_MUTATIONS_TYPE.UPDATE, value);
+      localStorage.setItem('results', JSON.stringify(state.data));
+    }
   },
   getters: {
-    getResult: state => resultId => state.data.find(r => r.id === resultId),
+    getResult: state => resultId =>
+      state.data.find(r => r.id === parseInt(resultId, 10)),
+
     getCharactor: (state, getter, rootState, rootGetter) => resultId => {
       const result = getter.getResult(resultId);
       return rootGetter['charactors/getCharactor'](result.charactor_id);
     },
-    getPark: (state, getter, rootState) => parkId =>
-      rootState.parks.data.find(park => park.id === parkId),
+
     getObtainPip: (state, getter) => resultId => {
       const result = getter.getResult(resultId);
-      console.log(result, result.emblems)
+
       if (!result.emblems) {
         return 0;
       }
 
       let emblemScore = 0;
+
       Object.keys(result.emblems).forEach(emblem => {
         if (result.emblems[emblem] == null) {
           return;
         }
         emblemScore += result.emblems[emblem];
       });
-
-      console.log(
-        emblemScore,
-        emblemScore <= 5,
-        emblemScore <= 8,
-        emblemScore <= 13,
-        emblemScore <= 16
-      );
 
       if (emblemScore <= 5) {
         return -1;

@@ -23,8 +23,6 @@ export default {
     }),
   },
   mounted() {
-    console.log('appContent');
-    console.log(this, this)
   },
 };
 </script>
