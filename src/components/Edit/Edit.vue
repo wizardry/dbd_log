@@ -13,7 +13,17 @@
         <dt>試合日</dt>
         <dd>{{ playDateTime }}</dd>
         <dt>使用キャラクター</dt>
-        <dd>{{ charactor.name_en }}/{{ charactor.name_jp }}</dd>
+        <dd>
+          <select
+            v-model="inputCharactor"
+            ref="charactor"
+          >
+            <option v-for="charactor in $store.state.charactors.data" :value="charactor.id" >
+              {{charactor.name_jp}}/{{charactor.name_en}}
+            </option>
+          </select>
+          <p>{{ charactor.name_en }}/{{ charactor.name_jp }}</p>
+        </dd>
         <dt>スコア：得点</dt>
         <dd>{{ result.score }}</dd>
         <dt>スコア：エンブレム</dt>
@@ -47,7 +57,7 @@
         <dt>全サバイバー状況</dt>
         <dd>
           <ul>
-            <li v-for="(status, index) in result.players_status">
+            <li v-for="(status, key) in result.players_status">
               <div>
                 <span v-if="status == 0">生存</span>
                 <span v-if="status == 1">死亡</span>
@@ -55,7 +65,7 @@
                 <span v-if="status == 3">切断</span>
                 <span v-if="status == null">未登録</span>
               </div>
-              <div v-if="!isKiller && index === 0">
+              <div v-if="!isKiller && key === 'player_1'">
                 YOUR
               </div>
             </li>
@@ -86,6 +96,11 @@
 </template>
 
 <script>
+
+const EMBLEM_TYPES = {
+  killer: ['gatekeeper', 'devout', 'malicious', 'chaser'],
+  survivor:['lightbringer', 'unbroken', 'benevolent', 'evader']
+};
 
 export default {
   name: 'log-edit',
@@ -132,7 +147,7 @@ export default {
       let result = {};
 
       Object.keys(emblemsObj).forEach( (key) => {
-        if (emblemsObj[key] === null) {
+        if (EMBLEM_TYPES[this.charactor.type].indexOf(key) === -1) {
           return;
         }
         result[key] = emblemsObj[key]
@@ -152,10 +167,27 @@ export default {
 
     obtainPip() {
       return this.$store.getters['results/getObtainPip'](this.resultId);
+    },
+
+    inputCharactor: {
+      get() {
+        return this.result.charactor_id
+      },
+      set (value) {
+        this.$store.dispatch('results/update', {
+          id: this.resultId,
+          key: 'charactor_id',
+          value: value,
+        });
+      }
     }
   },
   methods: {
     onSubmit() {},
+    updateForm(val) {
+      console.log(val)
+      this.$store.dispatch('results/update', val);
+    },
   },
   mounted() {
     console.log(

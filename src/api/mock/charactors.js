@@ -96,8 +96,8 @@ export default {
       type: "survivor",
   }, {
       id: 20,
-      name_en: "WILLIAM "BILL" OVERBECK",
-      name_jp: "ウィリアム・"ビル"・オーバーベック",
+      name_en: "WILLIAM BILL OVERBECK",
+      name_jp: "ウィリアム・ビル・オーバーベック",
       type: "survivor",
   }, {
       id: 21,

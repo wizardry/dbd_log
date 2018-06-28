@@ -122,13 +122,16 @@ const results = {
     [RESULTS_MUTATIONS_TYPE.FETCH_RESULTS](state, value) {
       state.data = value.results;
     },
-    [SETTINGS_MUTATIONS_TYPE.DELETE](state, value) {
+    [RESULTS_MUTATIONS_TYPE.DELETE](state, value) {
       state.mode = value;
     },
-    [SETTINGS_MUTATIONS_TYPE.UPDATE](state, value) {
-      state.mode = value;
+    [RESULTS_MUTATIONS_TYPE.UPDATE](state, value) {
+      const target = state.data.find(d =>
+        value.id.toString(10) === d.id.toString(10))
+      console.log(value, target)
+      target[value.key] = value.value
     },
-    [SETTINGS_MUTATIONS_TYPE.CREATE](state) {
+    [RESULTS_MUTATIONS_TYPE.CREATE](state) {
       state.data[state.data.length] = { id: state.data.length };
     },
   },
@@ -139,17 +142,18 @@ const results = {
     },
 
     delete({ commit, state }, value) {
-      commit(SETTINGS_MUTATIONS_TYPE.DELETE, value);
+      commit(RESULTS_MUTATIONS_TYPE.DELETE, value);
       localStorage.setItem('results', JSON.stringify(state.data));
     },
 
     update({ commit, state }, value) {
-      commit(SETTINGS_MUTATIONS_TYPE.UPDATE, value);
+      console.log(value, state)
+      commit(RESULTS_MUTATIONS_TYPE.UPDATE, value);
       localStorage.setItem('results', JSON.stringify(state.data));
     },
 
     create({ commit, state }) {
-      commit(SETTINGS_MUTATIONS_TYPE.CREATE);
+      commit(RESULTS_MUTATIONS_TYPE.CREATE);
       localStorage.setItem('results', JSON.stringify(state.data));
     },
   },
