@@ -5,6 +5,17 @@ import mockResults from '~/api/mock/results';
 import mockCharactors from '~/api/mock/charactors';
 import mockParks from '~/api/mock/parks';
 
+const dateFormat = date => {
+  let result = null;
+  if (date === undefined || date === null) {
+    result = new Date();
+  } else {
+    result = new Date(date);
+  }
+  console.log(result)
+  return result.toLocaleString();
+};
+
 const SETTINGS_MUTATIONS_TYPE = {
   FETCH_SETTINGS: 'fetch',
   CHANGE_MODE: 'change_mode',
@@ -100,6 +111,7 @@ const RESULTS_MUTATIONS_TYPE = {
   FETCH_RESULTS: 'fetch',
   DELETE: 'delete',
   UPDATE: 'update',
+  CREATE: 'create',
 };
 const results = {
   namespaced: true,
@@ -116,6 +128,9 @@ const results = {
     [SETTINGS_MUTATIONS_TYPE.UPDATE](state, value) {
       state.mode = value;
     },
+    [SETTINGS_MUTATIONS_TYPE.CREATE](state) {
+      state.data[state.data.length] = { id: state.data.length };
+    },
   },
   actions: {
     initialize({ commit }) {
@@ -131,7 +146,12 @@ const results = {
     update({ commit, state }, value) {
       commit(SETTINGS_MUTATIONS_TYPE.UPDATE, value);
       localStorage.setItem('results', JSON.stringify(state.data));
-    }
+    },
+
+    create({ commit, state }) {
+      commit(SETTINGS_MUTATIONS_TYPE.CREATE);
+      localStorage.setItem('results', JSON.stringify(state.data));
+    },
   },
   getters: {
     getResult: state => resultId =>
@@ -140,6 +160,11 @@ const results = {
     getCharactor: (state, getter, rootState, rootGetter) => resultId => {
       const result = getter.getResult(resultId);
       return rootGetter['charactors/getCharactor'](result.charactor_id);
+    },
+
+    getMyParks: (state, getter, rootState, rootGetter) => resultId => {
+      const result = getter.getResult(resultId);
+      return result.my_park_ids.map(id => rootGetter['parks/getPark'](id));
     },
 
     getObtainPip: (state, getter) => resultId => {
@@ -170,7 +195,23 @@ const results = {
 
       console.error('getObtainPip error');
       return 0;
-    }
+    },
+
+    createdDateTime: (state, getter) => resultId => {
+      const result = getter.getResult(resultId);
+      return dateFormat(result.created);
+    },
+
+    updateDateTime: (state, getter) => resultId => {
+      const result = getter.getResult(resultId);
+      return dateFormat(result.update);
+    },
+
+    playDateTime: (state, getter) => resultId => {
+      const result = getter.getResult(resultId);
+      return dateFormat(result.date);
+    },
+
   },
 };
 

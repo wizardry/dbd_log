@@ -5,7 +5,7 @@
     <form @submit="onSubmit">
       <dl>
         <dt>id</dt>
-        <dd>{{ $data._result.id }}</dd>
+        <dd>{{ result.id }}</dd>
         <dt>登録日</dt>
         <dd>{{ registDateTime }}</dd>
         <dt>更新日</dt>
@@ -15,136 +15,160 @@
         <dt>使用キャラクター</dt>
         <dd>{{ charactor.name_en }}/{{ charactor.name_jp }}</dd>
         <dt>スコア：得点</dt>
-        <dd>{{ $data._result.score }}</dd>
+        <dd>{{ result.score }}</dd>
         <dt>スコア：エンブレム</dt>
-        <dd>{{ $data._result.emblems }}</dd>
+        <dd>
+          <ul>
+            <li v-for="(score, type) in filterByEmblems" :class="type">
+              score {{ score }}
+              <br>
+              type {{ type }}
+            </li>
+          </ul>
+          {{ result.emblems }}
+        </dd>
         <dt>パーク</dt>
-        <dd>{{ $data._result.my_park }}</dd>
-        <dt>参加プレイヤー情報</dt>
-        <dd>{{ $data._result.player_park }}</dd>
+        <dd>
+          <ul>
+            <li v-for="park in myParks">
+              <div v-if="park !== undefined">
+                {{park.name_en}}
+                /
+                {{park.name_jp}}
+              </div>
+              <div v-else> 不正確な情報が登録されています。 </div>
+            </li>
+          </ul>
+          {{ result.my_park }}
+        </dd>
+        <!-- isKillerでの出し分けUIがめんどい -->
+        <!-- <dt>参加プレイヤー情報</dt> -->
+        <!-- <dd>{{ result.player_park }}</dd> -->
         <dt>全サバイバー状況</dt>
-        <dd>{{ $data._result.players_status }}</dd>
-        <dt>クリア状況</dt>
-        <dd>{{ $data._result.status }}</dd>
+        <dd>
+          <ul>
+            <li v-for="(status, index) in result.players_status">
+              <div>
+                <span v-if="status == 0">生存</span>
+                <span v-if="status == 1">死亡</span>
+                <span v-if="status == 2">脱出</span>
+                <span v-if="status == 3">切断</span>
+                <span v-if="status == null">未登録</span>
+              </div>
+              <div v-if="!isKiller && index === 0">
+                YOUR
+              </div>
+            </li>
+          </ul>
+          {{ result.players_status }}
+        </dd>
+        <div v-if="!isKiller">
+          <dt>クリア状況</dt>
+          <dd>{{ result.status }}</dd>
+        </div>
         <dt>修理された発電機</dt>
-        <dd>{{ $data._result.fixed_generators }}</dd>
+        <dd>{{ result.fixed_generators }}台</dd>
         <dt>ランク</dt>
-        <dd>{{ $data._result.played_user }}</dd>
+        <dd>
+          <p>取得Pip：{{obtainPip}}</p>
+          <div v-if="isCreate">
+            aaa
+          </div>
+          <div v-else>
+            {{ result.played_user }}
+          </div>
+        </dd>
         <dt>コメント</dt>
-        <dd>{{ $data._result.comment }}</dd>
+        <dd>{{ result.comment }}</dd>
       </dl>
-
     </form>
   </div>
 </template>
 
 <script>
 
-const resultParams = {
-  id: null,
-  created: new Date(),
-  update: null,
-  date: null,
-  charactor_id: 1,
-  score: null,
-  emblems: {
-    gatekeeper: null,
-    devout: null,
-    malicious: null,
-    chaser: null,
-    lightbringer: null,
-    unbroken: null,
-    benevolent: null,
-    evader: null,
-  },
-  my_park: [null, null, null, null],
-  player_park: {
-    killer: [null, null, null, null],
-    survivors: {
-      player_1: [null, null, null, null],
-      player_2: [null, null, null, null],
-      player_3: [null, null, null, null],
-      player_4: [null, null, null, null],
-    }
-  },
-  players_status: {
-    player_1: 0,
-    player_2: 0,
-    player_3: 0,
-    player_4: 0,
-  },
-  status: 'escape',
-  fixed_generators: 0,
-  played_user: {
-    rank: null,
-    pip: null,
-  },
-  comment: '',
-};
-
 export default {
   name: 'log-edit',
-  data() {
-    return {
-      _result: this.resultId ? JSON.parse(JSON.stringify(this.masterResult)) : resultParams,
-    }
-  },
   computed: {
+    isKiller() {
+      return this.charactor.type === 'killer';
+    },
+
+    isCreate() {
+      return this.resultId == undefined;
+    },
+
     registDateTime() {
-      return this.dateFormat(this.$data._result.created);
+      console.log(this.$store.getters['results/createdDateTime'](this.resultId))
+      return this.$store.getters['results/createdDateTime'](this.resultId);
     },
 
     updateDateTime() {
-      return this.dateFormat(this.$data._result.update);
+      return this.$store.getters['results/updateDateTime'](this.resultId);
     },
 
     playDateTime() {
-      return this.dateFormat(this.$data._result.date);
+      return this.$store.getters['results/playDateTime'](this.resultId);
     },
 
     resultId() {
       return this.$store.getters['settings/getModeId'];
     },
 
-    masterResult() {
+    result() {
       return this.$store.getters['results/getResult'](this.resultId);
     },
 
     charactor() {
+      return this.$store.getters['charactors/getCharactor'](this.result.charactor_id);
+    },
 
-      console.log(
-        this.$store.getters['charactors/getCharactor'](this.$data._result.charactor_id)
-      )
-      return this.$store.getters['charactors/getCharactor'](this.$data._result.charactor_id);
+    myParks() {
+      return this.$store.getters['results/getMyParks'](this.resultId);
+    },
+
+    filterByEmblems() {
+      const emblemsObj = this.result.emblems;
+      let result = {};
+
+      Object.keys(emblemsObj).forEach( (key) => {
+        if (emblemsObj[key] === null) {
+          return;
+        }
+        result[key] = emblemsObj[key]
+      });
+
+      return result;
+
     },
 
     title() {
-      if (this.resultId == undefined) {
+      if (this.isCreate) {
         return '登録';
       } else {
         return `編集 <span>/ id: ${this.resultId}</span>`
       }
     },
+
+    obtainPip() {
+      return this.$store.getters['results/getObtainPip'](this.resultId);
+    }
   },
   methods: {
     onSubmit() {},
-    dateFormat(date) {
-      let _date = null;
-      if (date === undefined || date === null) {
-        _date = new Date();
-      } else {
-        _date = new Date(date);
-      }
-      console.log(_date)
-      return _date.toLocaleString();
-    }
   },
   mounted() {
     console.log(
       this.resultId,
       this.$store.getters['results/getResult'](this.resultId)
     )
-    console.log(this.$data._result)
+    console.log(this.result)
+
+    if (this.resultId === undefined) {
+      this.isCreate = true;
+      this.$store.getters['results/create'](this.resultId);
+
+    }
 
   },
 };
