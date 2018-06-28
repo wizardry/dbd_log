@@ -16,15 +16,15 @@ export default {
       benevolent: null,
       evader: null,
     },
-    my_park: [0, 5, 3, 1],
-    player_park: {
-      killer: [0, 0, 0, 0],
-      survivors: {
-        player_1: [0, 5, 3, 1],
-        player_2: [0, 5, 3, 1],
-        player_3: [0, 5, 3, 1],
-        player_4: [0, 5, 3, 1],
-      }
+    my_park_ids: [0, 5, 3, 1],
+    player_parks: {
+      killer_ids: [0, 0, 0, 0],
+      survivors_ids: [
+        [0, 5, 3, 1],
+        [0, 5, 3, 1],
+        [0, 5, 3, 1],
+        [0, 5, 3, 1],
+      ]
     },
     players_status: {
       player_1: 0,
