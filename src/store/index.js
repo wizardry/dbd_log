@@ -104,6 +104,12 @@ const parks = {
   getters: {
     getPark: state => parkId =>
       state.data.find(r => r.id === parkId),
+
+    getFilterByKillerType: state =>
+      state.data.filter(p => p.type === 'killer'),
+
+    getFilterBySurvivorType: state =>
+      state.data.filter(p => p.type === 'survivor'),
   },
 };
 

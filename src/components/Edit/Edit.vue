@@ -30,9 +30,11 @@
         <dd>
           <ul>
             <li v-for="(score, type) in filterByEmblems" :class="type">
-              score {{ score }}
-              <br>
-              type {{ type }}
+              <div @click="changeEmblem(type)">
+                score {{ score }}
+                <br>
+                type {{ type }}
+              </div>
             </li>
           </ul>
           {{ result.emblems }}
@@ -171,23 +173,33 @@ export default {
 
     inputCharactor: {
       get() {
-        return this.result.charactor_id
+        return this.result.charactor_id;
       },
       set (value) {
-        this.$store.dispatch('results/update', {
-          id: this.resultId,
-          key: 'charactor_id',
-          value: value,
-        });
+        this.updateForm({key: 'charactor_id', value: value });
       }
-    }
+    },
+
+
   },
   methods: {
     onSubmit() {},
     updateForm(val) {
-      console.log(val)
-      this.$store.dispatch('results/update', val);
+      const sendValue = {
+        id: this.resultId,
+        ...val,
+      }
+      this.$store.dispatch('results/update', sendValue);
     },
+    changeEmblem(type) {
+      const emblems = this.result.emblems;
+      emblems[type] = emblems[type] >= 4 ? 0 : emblems[type] + 1;
+      this.updateForm({key: 'emblems', value: emblems});
+    },
+
+    getPark(parkId) {
+      return this.$store.getters['parks/getPark'](parkId)
+    }
   },
   mounted() {
     console.log(
