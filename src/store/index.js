@@ -113,6 +113,48 @@ const parks = {
   },
 };
 
+const initResultTemplate = () => ({
+  id: null,
+  created: null,
+  update: null,
+  date: null,
+  charactor_id: null,
+  score: 0,
+  emblems: {
+    gatekeeper: null,
+    devout: null,
+    malicious: null,
+    chaser: null,
+    lightbringer: null,
+    unbroken: null,
+    benevolent: null,
+    evader: null,
+  },
+  my_park_ids: [null, null, null, null],
+  player_parks: {
+    killer_ids: [null, null, null, null],
+    survivors_ids: [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ]
+  },
+  players_status: {
+    player_1: 0,
+    player_2: 0,
+    player_3: 0,
+    player_4: 0,
+  },
+  status: 0,
+  fixed_generator: null,
+  played_user: {
+    rank: null,
+    pip: null,
+  },
+  comment: '',
+});
+
 const RESULTS_MUTATIONS_TYPE = {
   FETCH_RESULTS: 'fetch',
   DELETE: 'delete',
@@ -134,11 +176,17 @@ const results = {
     [RESULTS_MUTATIONS_TYPE.UPDATE](state, value) {
       const target = state.data.find(d =>
         value.id.toString(10) === d.id.toString(10))
-      console.log(value, target)
       target[value.key] = value.value
+      target.update = new Date();
     },
     [RESULTS_MUTATIONS_TYPE.CREATE](state) {
-      state.data[state.data.length] = { id: state.data.length };
+      const result = initResultTemplate();
+      result.id = state.data.length;
+      result.created = new Date();
+      result.update = new Date();
+      result.date = new Date();
+      state.data.push(result);
+      console.log(state)
     },
   },
   actions: {

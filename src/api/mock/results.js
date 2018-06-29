@@ -33,7 +33,7 @@ export default {
       player_4: 0,
     },
     status: 'escape',
-    fixed_generators: 5,
+    fixed_generator: 5,
     played_user: {
       rank: 20,
       pip: 2,

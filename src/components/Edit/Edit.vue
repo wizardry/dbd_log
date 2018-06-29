@@ -2,7 +2,7 @@
   <div>
     <p>edit</p>
     <h2 v-html="title"></h2>
-    <form @submit="onSubmit">
+    <form v-if="resultId !== undefined" @submit="onSubmit">
       <dl>
         <dt>id</dt>
         <dd>{{ result.id }}</dd>
@@ -22,13 +22,13 @@
               {{charactor.name_jp}}/{{charactor.name_en}}
             </option>
           </select>
-          <p>{{ charactor.name_en }}/{{ charactor.name_jp }}</p>
+          <p v-if="result.charactor_id !== null">{{ charactor.name_en }}/{{ charactor.name_jp }}</p>
         </dd>
         <dt>スコア：得点</dt>
         <dd>{{ result.score }}</dd>
         <dt>スコア：エンブレム</dt>
         <dd>
-          <ul>
+          <ul v-if="result.charactor_id !== null">
             <li v-for="(score, type) in filterByEmblems" :class="type">
               <div @click="changeEmblem(type)">
                 score {{ score }}
@@ -42,16 +42,27 @@
         <dt>パーク</dt>
         <dd>
           <ul>
-            <li v-for="park in myParks">
-              <div v-if="park !== undefined">
-                {{park.name_en}}
+            <li v-for="(park_id, index) in result.my_park_ids">
+              <div v-if="park_id !== null">
+<!--                 {{getPark(park_id).name_en}}
                 /
-                {{park.name_jp}}
-              </div>
+                {{getPark(park_id).name_jp}}
+ -->              </div>
               <div v-else> 不正確な情報が登録されています。 </div>
+              <select
+                :value="park_id"
+                @change="changePark"
+                :index="index"
+                name="park_select"
+                ref="park"
+              >
+                <option v-for="park in filterByParks" :value="park.id" >
+                  {{park.name_jp}}/{{park.name_en}}
+                </option>
+              </select>
             </li>
           </ul>
-          {{ result.my_park }}
+          {{ result.my_park_ids }}
         </dd>
         <!-- isKillerでの出し分けUIがめんどい -->
         <!-- <dt>参加プレイヤー情報</dt> -->
@@ -60,12 +71,9 @@
         <dd>
           <ul>
             <li v-for="(status, key) in result.players_status">
-              <div>
-                <span v-if="status == 0">生存</span>
-                <span v-if="status == 1">死亡</span>
-                <span v-if="status == 2">脱出</span>
-                <span v-if="status == 3">切断</span>
+              <div @click="onClickSurvivorStatus(key)">
                 <span v-if="status == null">未登録</span>
+                <span v-else>{{survivorStatusText(status)}}</span>
               </div>
               <div v-if="!isKiller && key === 'player_1'">
                 YOUR
@@ -79,7 +87,11 @@
           <dd>{{ result.status }}</dd>
         </div>
         <dt>修理された発電機</dt>
-        <dd>{{ result.fixed_generators }}台</dd>
+        <dd>
+          <div @click="onClickFixedGenerator">
+            {{ result.fixed_generator }}台
+          </div>
+        </dd>
         <dt>ランク</dt>
         <dd>
           <p>取得Pip：{{obtainPip}}</p>
@@ -91,7 +103,9 @@
           </div>
         </dd>
         <dt>コメント</dt>
-        <dd>{{ result.comment }}</dd>
+        <dd>
+          <textarea v-model="result.comment">{{result.comment}}</textarea>
+        </dd>
       </dl>
     </form>
   </div>
@@ -101,19 +115,28 @@
 
 const EMBLEM_TYPES = {
   killer: ['gatekeeper', 'devout', 'malicious', 'chaser'],
-  survivor:['lightbringer', 'unbroken', 'benevolent', 'evader']
+  survivor:['lightbringer', 'unbroken', 'benevolent', 'evader'],
 };
+
+const SURVIVOR_STATUS = ['生存', '脱出', '死亡', '切断'];
 
 export default {
   name: 'log-edit',
+  data() {
+    return {
+      isCreate: false,
+      resultId: this.$store.getters['settings/getModeId'],
+      result: {},
+    };
+  },
   computed: {
     isKiller() {
+      if (!charactor) {
+        return false;
+      }
       return this.charactor.type === 'killer';
     },
 
-    isCreate() {
-      return this.resultId == undefined;
-    },
 
     registDateTime() {
       console.log(this.$store.getters['results/createdDateTime'](this.resultId))
@@ -128,20 +151,16 @@ export default {
       return this.$store.getters['results/playDateTime'](this.resultId);
     },
 
-    resultId() {
-      return this.$store.getters['settings/getModeId'];
-    },
-
-    result() {
-      return this.$store.getters['results/getResult'](this.resultId);
-    },
-
     charactor() {
+      if (this.result.charactor_id == null) {
+        return null;
+      }
       return this.$store.getters['charactors/getCharactor'](this.result.charactor_id);
     },
 
     myParks() {
-      return this.$store.getters['results/getMyParks'](this.resultId);
+      return this.result.my_park_ids.map(id => this.$store.getters['parks/getPark'](id))
+      //this.$store.getters['results/getMyParks'](this.result.id);
     },
 
     filterByEmblems() {
@@ -157,6 +176,12 @@ export default {
 
       return result;
 
+    },
+
+    filterByParks() {
+
+      const getterName = this.isKiller ? 'getFilterByKillerType' : 'getFilterBySurvivorType';
+      return this.$store.getters[`parks/${getterName}`];;
     },
 
     title() {
@@ -180,7 +205,6 @@ export default {
       }
     },
 
-
   },
   methods: {
     onSubmit() {},
@@ -198,21 +222,52 @@ export default {
     },
 
     getPark(parkId) {
+      console.log(parkId)
       return this.$store.getters['parks/getPark'](parkId)
+    },
+
+    changePark(e) {
+      const result = {
+        key: 'my_park_ids',
+        value: this.$refs.park.map( ref => parseInt(ref.value)),
+      }
+      this.updateForm(result);
+    },
+
+    survivorStatusText(status) {
+      return SURVIVOR_STATUS[status];
+    },
+
+    onClickSurvivorStatus(key) {
+      const players_status = this.result.players_status;
+      console.log(key, players_status)
+      players_status[key] = parseInt(players_status[key]) >= 3 ? 0 : parseInt(players_status[key]) + 1;
+
+      this.updateForm({key: 'players_status', value: players_status});
+
+      if(!this.isKiller) {
+        this.updateForm({key: 'status', value: players_status[player_1]});
+      }
+    },
+
+    onClickFixedGenerator() {
+      const fixed_generator = this.result.fixed_generator >= 5 ? 0 : this.result.fixed_generator + 1;
+      this.updateForm({key: 'fixed_generator', value: fixed_generator});
     }
   },
   mounted() {
-    console.log(
-      this.resultId,
-      this.$store.getters['results/getResult'](this.resultId)
-    )
-    console.log(this.result)
-
     if (this.resultId === undefined) {
-      this.isCreate = true;
-      this.$store.getters['results/create'](this.resultId);
 
+      console.log(1)
+      this.isCreate = true;
+      console.log(2)
+      this.$store.dispatch('results/create');
+      console.log(3)
+      this.resultId = this.$store.state.results.data.length - 1;
+      console.log(4)
     }
+    console.log(this.resultId)
+    this.result = this.$store.getters['results/getResult'](this.resultId);
 
   },
 };
