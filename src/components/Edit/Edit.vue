@@ -141,7 +141,6 @@ export default {
     },
 
     registDateTime() {
-      console.log(this.$store.getters['results/createdDateTime'](this.resultId))
       return this.$store.getters['results/createdDateTime'](this.resultId);
     },
 
@@ -232,7 +231,6 @@ export default {
       set(value) {
         const result = {};
         result['key'] = 'played_user';
-        console.log(this.result)
         const playedUserData = this.result.played_user;
         if (this.isKiller) {
           playedUserData['killer'].rank = value;
@@ -291,7 +289,6 @@ export default {
     },
 
     getPark(parkId) {
-      console.log(parkId)
       return this.$store.getters['parks/getPark'](parkId)
     },
 
@@ -309,7 +306,6 @@ export default {
 
     onClickSurvivorStatus(key) {
       const players_status = this.result.players_status;
-      console.log(key, players_status)
       players_status[key] = parseInt(players_status[key]) >= 3 ? 0 : parseInt(players_status[key]) + 1;
 
       this.updateForm({key: 'players_status', value: players_status});
@@ -343,7 +339,6 @@ export default {
 
   },
   destroyed() {
-    console.log('destroyed', this.userRank)
     if (this.isCreate) {
       const value = this.result.last_played_user;
       if (this.isKiller) {
@@ -397,13 +392,16 @@ export default {
   }
 
   select,
+  input[type=number] {
+    height: 42px;
+  }
+
+  select,
   input[type=number],
   textarea {
-    box-sizing: border-box;
-    padding: 16px 8px;
-    font-size: 14px;
     width: 100%;
-    height: 42px;
+    box-sizing: border-box;
+    font-size: 14px;
   }
 
   textarea {
@@ -423,12 +421,14 @@ export default {
 
       img {
         max-width: 100%;
+        max-height: 70px;
       }
 
       .imgWrap {
         border-radius: 3px;
         box-shadow: 0 0 3px 0 #666;
         line-height: 0;
+        text-align: center;
       }
 
       &.rank0 {
@@ -488,9 +488,7 @@ export default {
       }
 
       img {
-        max-width: 100%;
-        transform: translateY(-50%);
-        margin-top: 50%;
+        height: 70px;
       }
     }
 
@@ -512,6 +510,7 @@ export default {
 
       img {
         max-width: 100%;
+        max-height: 70px;
       }
 
       .fixed {

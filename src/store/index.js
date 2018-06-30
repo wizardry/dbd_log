@@ -7,6 +7,8 @@ import mockParks from '~/api/mock/parks';
 
 // const mockResults = { results: [] };
 
+const debug = false;
+
 const dateFormat = date => {
   let result = null;
   if (date === undefined || date === null) {
@@ -40,8 +42,14 @@ const settings = {
   },
   actions: {
     initialize({ commit }) {
-      const data = mockSettings;
-      commit(SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS, data.app);
+      let data = debug ? mockSettings.app
+        : JSON.parse(localStorage.getItem('settings'));
+
+      if (!data) {
+        data = mockSettings.app;
+      }
+
+      commit(SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS, data);
     },
     changeMode({ commit, state }, value) {
       commit(SETTINGS_MUTATIONS_TYPE.CHANGE_MODE, value);
@@ -185,7 +193,6 @@ const results = {
       state.data = value.results;
     },
     [RESULTS_MUTATIONS_TYPE.DELETE](state, value) {
-      console.log(state)
       state.data = state.data.filter(result => result.id !== value);
     },
     [RESULTS_MUTATIONS_TYPE.UPDATE](state, value) {
@@ -217,23 +224,30 @@ const results = {
   },
   actions: {
     initialize({ commit }) {
-      const data = mockResults;
+      let data = debug ? mockResults
+        : JSON.parse(localStorage.getItem('results'));
+
+      if (data === undefined || data === null) {
+        data = { results: [] };
+        localStorage.setItem('results', JSON.stringify(data));
+      }
+
       commit(RESULTS_MUTATIONS_TYPE.FETCH_RESULTS, data);
     },
 
     delete({ commit, state }, value) {
       commit(RESULTS_MUTATIONS_TYPE.DELETE, value);
-      localStorage.setItem('results', JSON.stringify(state.data));
+      localStorage.setItem('results', JSON.stringify({ results: state.data }));
     },
 
     update({ commit, state }, value) {
       commit(RESULTS_MUTATIONS_TYPE.UPDATE, value);
-      localStorage.setItem('results', JSON.stringify(state.data));
+      localStorage.setItem('results', JSON.stringify({ results: state.data }));
     },
 
     create({ commit, state }) {
       commit(RESULTS_MUTATIONS_TYPE.CREATE);
-      localStorage.setItem('results', JSON.stringify(state.data));
+      localStorage.setItem('results', JSON.stringify({ results: state.data }));
     },
   },
   getters: {

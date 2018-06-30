@@ -63,7 +63,6 @@ export default {
     },
     filterByEmblems() {
       const emblemsObj = this.result.emblems;
-      console.log(this, emblemsObj)
       let result = {};
 
       Object.keys(emblemsObj).forEach( (key) => {

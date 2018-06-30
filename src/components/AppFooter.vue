@@ -12,7 +12,6 @@
 export default {
   name: 'app-footer',
   mounted:() => {
-    console.log('footer')
   },
 };
 

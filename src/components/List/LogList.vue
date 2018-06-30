@@ -1,6 +1,6 @@
 <template>
   <div class="logList">
-    <div v-if="results.length > 0">
+    <div v-if="results !== undefined && results.length > 0">
       <ul>
         <log-list-item v-for="(result, index) in reverseResults" :result="result" :key="result.id" />
       </ul>
