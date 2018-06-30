@@ -31,27 +31,6 @@
         <dd>
           <input type="number" v-model.number="result.score">
         </dd>
-        <dt>パーク</dt>
-        <dd>
-          <ul class="parkList">
-            <li v-for="(park_id, index) in result.my_park_ids">
-              <select
-                :value="park_id"
-                @change="changePark"
-                :index="index"
-                name="park_select"
-                ref="park"
-              >
-                <option v-for="park in filterByParks" :value="park.id" >
-                  {{park.name_jp}}/{{park.name_en}}
-                </option>
-              </select>
-            </li>
-          </ul>
-        </dd>
-        <!-- isKillerでの出し分けUIがめんどい -->
-        <!-- <dt>参加プレイヤー情報</dt> -->
-        <!-- <dd>{{ result.player_park }}</dd> -->
         <dt>全サバイバー状況</dt>
         <dd>
           <ul class="statusList">
@@ -87,6 +66,27 @@
           </ul>
           {{ result.fixed_generator }}台
         </dd>
+        <dt>パーク</dt>
+        <dd>
+          <ul class="parkList">
+            <li v-for="(park_id, index) in result.my_park_ids">
+              <select
+                :value="park_id"
+                @change="changePark"
+                :index="index"
+                name="park_select"
+                ref="park"
+              >
+                <option v-for="park in filterByParks" :value="park.id" >
+                  {{park.name_jp}}/{{park.name_en}}
+                </option>
+              </select>
+            </li>
+          </ul>
+        </dd>
+        <!-- isKillerでの出し分けUIがめんどい -->
+        <!-- <dt>参加プレイヤー情報</dt> -->
+        <!-- <dd>{{ result.player_park }}</dd> -->
         <dt>ランク</dt>
         <dd>
           <p>取得Pip：{{obtainPip}}</p>
@@ -100,7 +100,6 @@
           <div v-else>
             <input type="number" v-model.number="inputUserRankRank">
             <input type="number" v-model.number="inputUserRankPip">
-            {{ result.played_user }}
           </div>
         </dd>
         <dt>試合日</dt>
