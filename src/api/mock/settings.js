@@ -1,12 +1,11 @@
 export default {
   app: {
-    mode: 'edit',
+    // mode: 'edit/0',
+    mode: 'list',
     settings: {
       default_type: 'killer',
     },
     user: {
-      rank: 20,
-      pip: 0,
       charactor_sets: {},
     },
   },

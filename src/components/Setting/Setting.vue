@@ -8,7 +8,6 @@
 export default {
   name: 'settings',
   mounted() {
-    console.log('appContent');
   },
 };
 </script>

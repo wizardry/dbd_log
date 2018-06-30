@@ -22,7 +22,6 @@
               {{charactor.name_jp}}/{{charactor.name_en}}
             </option>
           </select>
-          <p v-if="result.charactor_id !== null">{{ charactor.name_en }}/{{ charactor.name_jp }}</p>
         </dd>
         <dt>スコア：得点</dt>
         <dd>{{ result.score }}</dd>
@@ -43,12 +42,6 @@
         <dd>
           <ul>
             <li v-for="(park_id, index) in result.my_park_ids">
-              <div v-if="park_id !== null">
-<!--                 {{getPark(park_id).name_en}}
-                /
-                {{getPark(park_id).name_jp}}
- -->              </div>
-              <div v-else> 不正確な情報が登録されています。 </div>
               <select
                 :value="park_id"
                 @change="changePark"
@@ -96,7 +89,11 @@
         <dd>
           <p>取得Pip：{{obtainPip}}</p>
           <div v-if="isCreate">
-            aaa
+            <p>登録時は最終登録データを参照しエンブレムスコアから自動算出されるため編集できません。</p>
+            <ul>
+              <li>rank: {{userRank.rank}}</li>
+              <li>pip: {{userRank.pip}}</li>
+            </ul>
           </div>
           <div v-else>
             {{ result.played_user }}
@@ -131,12 +128,11 @@ export default {
   },
   computed: {
     isKiller() {
-      if (!charactor) {
+      if (!this.charactor) {
         return false;
       }
       return this.charactor.type === 'killer';
     },
-
 
     registDateTime() {
       console.log(this.$store.getters['results/createdDateTime'](this.resultId))
@@ -164,6 +160,10 @@ export default {
     },
 
     filterByEmblems() {
+      if(!this.result.emblems) {
+        return {};
+      }
+
       const emblemsObj = this.result.emblems;
       let result = {};
 
@@ -179,6 +179,9 @@ export default {
     },
 
     filterByParks() {
+      if (this.isKiller === undefined) {
+        return {};
+      }
 
       const getterName = this.isKiller ? 'getFilterByKillerType' : 'getFilterBySurvivorType';
       return this.$store.getters[`parks/${getterName}`];;
@@ -205,6 +208,10 @@ export default {
       }
     },
 
+    userRank() {
+      return this.$store.getters['results/addedPipUserData'](this.obtainPip);
+    }
+
   },
   methods: {
     onSubmit() {},
@@ -215,6 +222,7 @@ export default {
       }
       this.$store.dispatch('results/update', sendValue);
     },
+
     changeEmblem(type) {
       const emblems = this.result.emblems;
       emblems[type] = emblems[type] >= 4 ? 0 : emblems[type] + 1;
@@ -246,7 +254,7 @@ export default {
       this.updateForm({key: 'players_status', value: players_status});
 
       if(!this.isKiller) {
-        this.updateForm({key: 'status', value: players_status[player_1]});
+        this.updateForm({key: 'status', value: players_status['player_1']});
       }
     },
 
@@ -257,19 +265,20 @@ export default {
   },
   mounted() {
     if (this.resultId === undefined) {
-
-      console.log(1)
       this.isCreate = true;
-      console.log(2)
       this.$store.dispatch('results/create');
-      console.log(3)
       this.resultId = this.$store.state.results.data.length - 1;
-      console.log(4)
     }
-    console.log(this.resultId)
+
     this.result = this.$store.getters['results/getResult'](this.resultId);
 
   },
+  destroyed() {
+    console.log('destroyed', this.userRank)
+    if (this.isCreate) {
+      this.updateForm({ key: 'played_user', value: this.userRank });
+    }
+  }
 };
 </script>
 

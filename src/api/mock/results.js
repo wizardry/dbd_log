@@ -38,6 +38,10 @@ export default {
       rank: 20,
       pip: 2,
     },
+    last_played_user: {
+      rank: 20,
+      pip: 0,
+    },
     comment: 'キャンプなし',
   }, {
     id: 1,
@@ -77,6 +81,10 @@ export default {
     played_user: {
       rank: 20,
       pip: 2,
+    },
+    last_played_user: {
+      rank: 20,
+      pip: 0,
     },
     comment: 'キャンプなし',
   }],

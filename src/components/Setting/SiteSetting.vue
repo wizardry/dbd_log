@@ -8,7 +8,6 @@
 export default {
   name: 'app-content',
   mounted() {
-    console.log('appContent');
   },
 };
 </script>

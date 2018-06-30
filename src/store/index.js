@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import mockSettings from '~/api/mock/settings';
-import mockResults from '~/api/mock/results';
+// import mockResults from '~/api/mock/results';
 import mockCharactors from '~/api/mock/charactors';
 import mockParks from '~/api/mock/parks';
+
+const mockResults = { results: [] };
 
 const dateFormat = date => {
   let result = null;
@@ -12,7 +14,6 @@ const dateFormat = date => {
   } else {
     result = new Date(date);
   }
-  console.log(result)
   return result.toLocaleString();
 };
 
@@ -26,14 +27,12 @@ const settings = {
   state: {
     mode: '',
     settings: {},
-    user: {},
   },
   mutations: {
     [SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS](state, value) {
       state.mode = value.mode;
       state.settings = value.settings;
       state.user = value.user;
-      console.log(state, value)
     },
     [SETTINGS_MUTATIONS_TYPE.CHANGE_MODE](state, value) {
       state.mode = value;
@@ -42,7 +41,6 @@ const settings = {
   actions: {
     initialize({ commit }) {
       const data = mockSettings;
-      console.log('initialize', data);
       commit(SETTINGS_MUTATIONS_TYPE.FETCH_SETTINGS, data.app);
     },
     changeMode({ commit, state }, value) {
@@ -121,14 +119,14 @@ const initResultTemplate = () => ({
   charactor_id: null,
   score: 0,
   emblems: {
-    gatekeeper: null,
-    devout: null,
-    malicious: null,
-    chaser: null,
-    lightbringer: null,
-    unbroken: null,
-    benevolent: null,
-    evader: null,
+    gatekeeper: 0,
+    devout: 0,
+    malicious: 0,
+    chaser: 0,
+    lightbringer: 0,
+    unbroken: 0,
+    benevolent: 0,
+    evader: 0,
   },
   my_park_ids: [null, null, null, null],
   player_parks: {
@@ -147,7 +145,7 @@ const initResultTemplate = () => ({
     player_4: 0,
   },
   status: 0,
-  fixed_generator: null,
+  fixed_generator: 0,
   played_user: {
     rank: null,
     pip: null,
@@ -185,8 +183,18 @@ const results = {
       result.created = new Date();
       result.update = new Date();
       result.date = new Date();
+
+      // 使用キャラクター, 使用パークは最終データを引き継ぐ
+      const lastResult = state.data.slice(-1)[0];
+
+      result.charactor_id = lastResult === undefined
+        ? 1 : lastResult.charactor_id;
+      result.my_park_ids = lastResult === undefined
+        ? [null, null, null, null] : lastResult.my_park_ids;
+      result.last_played_user = lastResult === undefined
+        ? { rank: 20, pip: 0 } : lastResult.played_user;
+
       state.data.push(result);
-      console.log(state)
     },
   },
   actions: {
@@ -201,7 +209,6 @@ const results = {
     },
 
     update({ commit, state }, value) {
-      console.log(value, state)
       commit(RESULTS_MUTATIONS_TYPE.UPDATE, value);
       localStorage.setItem('results', JSON.stringify(state.data));
     },
@@ -253,6 +260,31 @@ const results = {
 
       console.error('getObtainPip error');
       return 0;
+    },
+
+    // create でしか使用しないためresult idは不要
+    addedPipUserData: state => pip => {
+      const lastData = state.data.length > 1
+        ? state.data.slice(-2)[0].played_user
+        : { rank: 20, pip: 0 };
+
+      let rank = lastData.rank + 0;
+      let addedPip = lastData.pip + pip;
+      let maxPip = 5;
+
+      if (lastData.rank > 12) {
+        maxPip = 4
+      }
+      if (lastData.rank > 18) {
+        maxPip = 3
+      }
+
+      if (addedPip > maxPip) {
+        addedPip = rank >= 1 ? addedPip - maxPip : maxPip;
+        rank = rank >= 1 ? rank - 1 : 1;
+      }
+
+      return { rank, pip: addedPip };
     },
 
     createdDateTime: (state, getter) => resultId => {
