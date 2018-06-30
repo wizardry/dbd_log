@@ -35,12 +35,24 @@ export default {
     status: 'escape',
     fixed_generator: 5,
     played_user: {
-      rank: 20,
-      pip: 2,
+      survivor: {
+        rank: 20,
+        pip: 2,
+      },
+      killer: {
+        rank: 17,
+        pip: 3,
+      },
     },
     last_played_user: {
-      rank: 20,
-      pip: 0,
+      survivor: {
+        rank: 20,
+        pip: 0,
+      },
+      killer: {
+        rank: 17,
+        pip: 2,
+      },
     },
     comment: 'キャンプなし',
   }, {
@@ -79,12 +91,24 @@ export default {
     status: 'escape',
     fixed_generators: 5,
     played_user: {
-      rank: 20,
-      pip: 2,
+      survivor: {
+        rank: 20,
+        pip: 2,
+      },
+      killer: {
+        rank: 17,
+        pip: 3,
+      },
     },
     last_played_user: {
-      rank: 20,
-      pip: 0,
+      survivor: {
+        rank: 20,
+        pip: 0,
+      },
+      killer: {
+        rank: 17,
+        pip: 2,
+      },
     },
     comment: 'キャンプなし',
   }],

@@ -1,7 +1,7 @@
 <template>
   <div class="footerWrap">
     <footer>
-      dev by 
+      dev by
       <a href="" target="_blank">@wiz_rein</a>
     </footer>
   </div>
@@ -23,6 +23,8 @@ body {
   margin: 0;
   position: relative;
   padding-bottom: 20px;
+  padding-top: 80px;
+  text-shadow: 0 0 4px #ccc;
 }
 
 .footerWrap {
@@ -35,11 +37,11 @@ body {
   background: #616161;
   border-top: 1px solid #666;
   color: #ccc;
-  
+
   footer {
     text-align: right;
     padding: 0 8px;
-    
+
     a {
       color: #ccc;
     }

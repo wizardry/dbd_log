@@ -1,0 +1,10 @@
+// variables
+$rankColors: #aaa9a9, #ab713c, #808080, #e8c252, #ff0955;
+$none: nth($rankColors, 1);
+$bronze: nth($rankColors, 2);
+$silver: nth($rankColors, 3);
+$gold: nth($rankColors, 4);
+$iridescent: nth($rankColors, 5);
+
+$mainColor: #000;
+$primaryColor: #fff;

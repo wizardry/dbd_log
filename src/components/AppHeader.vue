@@ -1,19 +1,21 @@
 <template>
   <div class="headerWrap">
-    <h1>dead by daylight Log</h1>
+    <h1>
+      dead by daylight Log
+      <span class="nowMode">{{type}}</span>
+    </h1>
     <div class="switch">
       <ul>
         <li>
-          <button @click="changeType('list')" ref="list">LIST MODE</button>
+          <button @click="changeType('list')" ref="list">Result</button>
+        </li>
+        <li v-show="type.indexOf('edit') === -1">
+          <button @click="changeType('edit')" ref="edit">Regist</button>
         </li>
         <li>
-          <button @click="changeType('edit')" ref="edit">EDIT MODE</button>
-        </li>
-        <li>
-          <button @click="changeType('setting')" ref="setting">SETTING MODE</button>
+          <button @click="changeType('setting')" ref="setting">Setting</button>
         </li>
       </ul>
-      <p class="nowMode">{{type}}</p>
     </div>
   </div>
 
@@ -45,14 +47,20 @@ export default {
 
 </script>
 <style lang="scss">
+
 .headerWrap {
-  background: #616161;
+  background: #000;
   border-top: 1px solid #666;
+  position: fixed;
+  width: 100%;
+  top: 0;
 
   h1 {
+    font-family: Anton, sans-serif;
+    text-transform: uppercase;
     margin: 0;
     font-size: 14px;
-    color: #999;
+    color: #fff;
     padding: 4px 8px;
   }
 
@@ -66,19 +74,30 @@ export default {
       flex: 1 1;
       justify-content: space-around;
       text-align: center;
+      height: 36px;
+      border-bottom: 1px solid $mainColor;
 
       button {
-        width: 95%;
+        width: 100%;
+        height: 100%;
+        font-size: 14px;
+        background: $primaryColor;
+        background-image: none;
+        border: none;
       }
     }
   }
 
   .nowMode {
     text-align: right;
-    color: #fff;
     font-size: 12px;
     padding: 0 4px;
     margin: 0;
+
+    &::before {
+      content: '-';
+      margin: 0 8px;
+    }
   }
 }
 </style>

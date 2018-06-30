@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import mockSettings from '~/api/mock/settings';
-// import mockResults from '~/api/mock/results';
+import mockResults from '~/api/mock/results';
 import mockCharactors from '~/api/mock/charactors';
 import mockParks from '~/api/mock/parks';
 
-const mockResults = { results: [] };
+// const mockResults = { results: [] };
 
 const dateFormat = date => {
   let result = null;
@@ -147,8 +147,24 @@ const initResultTemplate = () => ({
   status: 0,
   fixed_generator: 0,
   played_user: {
-    rank: null,
-    pip: null,
+    survivor: {
+      rank: null,
+      pip: null,
+    },
+    killer: {
+      rank: null,
+      pip: null,
+    },
+  },
+  last_played_user: {
+    survivor: {
+      rank: null,
+      pip: null,
+    },
+    killer: {
+      rank: null,
+      pip: null,
+    },
   },
   comment: '',
 });
@@ -169,7 +185,8 @@ const results = {
       state.data = value.results;
     },
     [RESULTS_MUTATIONS_TYPE.DELETE](state, value) {
-      state.mode = value;
+      console.log(state)
+      state.data = state.data.filter(result => result.id !== value);
     },
     [RESULTS_MUTATIONS_TYPE.UPDATE](state, value) {
       const target = state.data.find(d =>
@@ -192,7 +209,8 @@ const results = {
       result.my_park_ids = lastResult === undefined
         ? [null, null, null, null] : lastResult.my_park_ids;
       result.last_played_user = lastResult === undefined
-        ? { rank: 20, pip: 0 } : lastResult.played_user;
+        ? { survivor: { rank: 20, pip: 0 }, killer: { rank: 20, pip: 0 } }
+        : lastResult.played_user;
 
       state.data.push(result);
     },
@@ -263,28 +281,33 @@ const results = {
     },
 
     // create でしか使用しないためresult idは不要
-    addedPipUserData: state => pip => {
-      const lastData = state.data.length > 1
+    addedPipUserData: (state, getters) => pip => {
+      const selectedCharactor =
+        getters.getCharactor(state.data.slice(-1)[0].id);
+      const userType = selectedCharactor.type;
+      const rankData = state.data.length > 1
         ? state.data.slice(-2)[0].played_user
-        : { rank: 20, pip: 0 };
+        : { survivor: { rank: 20, pip: 0 }, killer: { rank: 20, pip: 0 } };
 
-      let rank = lastData.rank + 0;
-      let addedPip = lastData.pip + pip;
+      rankData[userType].pip += pip;
+
       let maxPip = 5;
 
-      if (lastData.rank > 12) {
+      if (rankData[userType].rank > 12) {
         maxPip = 4
       }
-      if (lastData.rank > 18) {
+      if (rankData[userType].rank > 18) {
         maxPip = 3
       }
 
-      if (addedPip > maxPip) {
-        addedPip = rank >= 1 ? addedPip - maxPip : maxPip;
-        rank = rank >= 1 ? rank - 1 : 1;
+      if (rankData[userType].pip > maxPip) {
+        rankData[userType].pip = rankData[userType].rank >= 1
+          ? rankData[userType].pip - maxPip : maxPip;
+        rankData[userType].rank = rankData[userType].rank >= 1
+          ? rankData[userType].rank - 1 : 1;
       }
 
-      return { rank, pip: addedPip };
+      return rankData;
     },
 
     createdDateTime: (state, getter) => resultId => {

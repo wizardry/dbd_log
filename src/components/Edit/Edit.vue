@@ -1,17 +1,9 @@
 <template>
-  <div>
-    <p>edit</p>
+  <div class="editPage">
     <h2 v-html="title"></h2>
     <form v-if="resultId !== undefined" @submit="onSubmit">
+      <p class="dateInfo">U:{{ updateDateTime }} / C:{{ registDateTime }}</p>
       <dl>
-        <dt>id</dt>
-        <dd>{{ result.id }}</dd>
-        <dt>登録日</dt>
-        <dd>{{ registDateTime }}</dd>
-        <dt>更新日</dt>
-        <dd>{{ updateDateTime }}</dd>
-        <dt>試合日</dt>
-        <dd>{{ playDateTime }}</dd>
         <dt>使用キャラクター</dt>
         <dd>
           <select
@@ -23,24 +15,25 @@
             </option>
           </select>
         </dd>
-        <dt>スコア：得点</dt>
-        <dd>{{ result.score }}</dd>
         <dt>スコア：エンブレム</dt>
         <dd>
-          <ul v-if="result.charactor_id !== null">
-            <li v-for="(score, type) in filterByEmblems" :class="type">
+          <ul class="emblemList" v-if="result.charactor_id !== null">
+            <li v-for="(score, type) in filterByEmblems" :class="[type,`rank${score}`]">
               <div @click="changeEmblem(type)">
-                score {{ score }}
-                <br>
-                type {{ type }}
+                <div class="imgWrap">
+                  <img :src="getEmblemImagePath(type)" alt="">
+                </div>
               </div>
             </li>
           </ul>
-          {{ result.emblems }}
+        </dd>
+        <dt>スコア：得点</dt>
+        <dd>
+          <input type="number" v-model="result.score">
         </dd>
         <dt>パーク</dt>
         <dd>
-          <ul>
+          <ul class="parkList">
             <li v-for="(park_id, index) in result.my_park_ids">
               <select
                 :value="park_id"
@@ -55,35 +48,44 @@
               </select>
             </li>
           </ul>
-          {{ result.my_park_ids }}
         </dd>
         <!-- isKillerでの出し分けUIがめんどい -->
         <!-- <dt>参加プレイヤー情報</dt> -->
         <!-- <dd>{{ result.player_park }}</dd> -->
         <dt>全サバイバー状況</dt>
         <dd>
-          <ul>
+          <ul class="statusList">
             <li v-for="(status, key) in result.players_status">
               <div @click="onClickSurvivorStatus(key)">
                 <span v-if="status == null">未登録</span>
-                <span v-else>{{survivorStatusText(status)}}</span>
+                <div v-else>
+                  <div class="statusListImgWrap">
+                    <img :src="getStatusImagePath(status)">
+                  </div>
+                  {{survivorStatusText(status)}}
+                </div>
               </div>
-              <div v-if="!isKiller && key === 'player_1'">
+              <div class="playerNum" v-if="!isKiller && key === 'player_1'">
                 YOUR
               </div>
+              <div class="playerNum" v-else>{{key}}</div>
             </li>
           </ul>
-          {{ result.players_status }}
         </dd>
         <div v-if="!isKiller">
           <dt>クリア状況</dt>
-          <dd>{{ result.status }}</dd>
+          <dd>{{ survivorStatusText(result.status) }}</dd>
         </div>
         <dt>修理された発電機</dt>
         <dd>
-          <div @click="onClickFixedGenerator">
-            {{ result.fixed_generator }}台
-          </div>
+          <ul class="fixedGeneratorList">
+            <li v-for="count in [1, 2, 3, 4, 5]" :key="count"  @click="onClickFixedGenerator(count)">
+              <div :class="fixedGeneratorClass(count)">
+                <img src="/images/generators.png">
+              </div>
+            </li>
+          </ul>
+          {{ result.fixed_generator }}台
         </dd>
         <dt>ランク</dt>
         <dd>
@@ -99,6 +101,8 @@
             {{ result.played_user }}
           </div>
         </dd>
+        <dt>試合日</dt>
+        <dd>{{ playDateTime }}</dd>
         <dt>コメント</dt>
         <dd>
           <textarea v-model="result.comment">{{result.comment}}</textarea>
@@ -116,6 +120,7 @@ const EMBLEM_TYPES = {
 };
 
 const SURVIVOR_STATUS = ['生存', '脱出', '死亡', '切断'];
+const SURVIVOR_STATUS_IMAGE = ['life', 'exit', 'death', 'disconnected'];
 
 export default {
   name: 'log-edit',
@@ -209,7 +214,9 @@ export default {
     },
 
     userRank() {
-      return this.$store.getters['results/addedPipUserData'](this.obtainPip);
+      const charactorType = this.isKiller ? 'killer' : 'survivor';
+      return this.$store.getters['results/addedPipUserData']
+        (this.obtainPip)[charactorType];
     }
 
   },
@@ -227,6 +234,10 @@ export default {
       const emblems = this.result.emblems;
       emblems[type] = emblems[type] >= 4 ? 0 : emblems[type] + 1;
       this.updateForm({key: 'emblems', value: emblems});
+    },
+
+    getEmblemImagePath(type) {
+      return `../../images/${type}_em_ic.png`
     },
 
     getPark(parkId) {
@@ -258,9 +269,17 @@ export default {
       }
     },
 
-    onClickFixedGenerator() {
-      const fixed_generator = this.result.fixed_generator >= 5 ? 0 : this.result.fixed_generator + 1;
-      this.updateForm({key: 'fixed_generator', value: fixed_generator});
+    getStatusImagePath(status) {
+      return `../../images/status_${SURVIVOR_STATUS_IMAGE[status]}.png`
+    },
+
+    onClickFixedGenerator(count) {
+      const value = count === this.result.fixed_generator ? 0 : count;
+      this.updateForm({key: 'fixed_generator', value: value});
+    },
+
+    fixedGeneratorClass(count) {
+      return this.result.fixed_generator < count ? 'nonfix' : 'fixed';
     }
   },
   mounted() {
@@ -283,5 +302,174 @@ export default {
 </script>
 
 <style lang="scss">
+.editPage {
+  color: #212121;
 
+  h2 {
+    margin: 0;
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+
+  .dateInfo {
+    padding-left: 8px;
+    margin: 0;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  dt {
+    padding: 4px;
+    font-size: 12px;
+    background: lighten($mainColor, 10);
+    color: $primaryColor;
+  }
+
+  dd {
+    margin: 0;
+    padding: 8px 4px 16px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  select,
+  input[type=number],
+  textarea {
+    box-sizing: border-box;
+    padding: 16px 8px;
+    font-size: 14px;
+    width: 100%;
+    height: 42px;
+  }
+
+  textarea {
+    height: auto;
+    min-height: 160px;
+  }
+
+  .emblemList {
+    width: 100%;
+    display: flex;
+
+    li {
+      box-sizing: border-box;
+      padding: 0 4px;
+      width: 25%;
+      flex: 1 1;
+
+      img {
+        max-width: 100%;
+      }
+
+      .imgWrap {
+        border-radius: 3px;
+        box-shadow: 0 0 3px 0 #666;
+        line-height: 0;
+      }
+
+      &.rank0 {
+        .imgWrap {
+          background: transparent;
+        }
+      }
+
+      &.rank1 {
+        .imgWrap {
+          background: $bronze;
+        }
+      }
+
+      &.rank2 {
+        .imgWrap {
+          background: $silver;
+        }
+      }
+
+      &.rank3 {
+        .imgWrap {
+          background: $gold;
+        }
+      }
+
+      &.rank4 {
+        .imgWrap {
+          background: $iridescent;
+        }
+      }
+    }
+  }
+
+  .parkList {
+    li {
+      margin: 4px 0;
+    }
+  }
+
+  .statusList {
+    width: 100%;
+    display: flex;
+
+    li {
+      box-sizing: border-box;
+      padding: 0 4px;
+      width: 25%;
+      flex: 1 1;
+      text-align: center;
+
+      .statusListImgWrap {
+        position: relative;
+        height: 70px;
+        line-height: 0;
+        vertical-align: middle;
+      }
+
+      img {
+        max-width: 100%;
+        transform: translateY(-50%);
+        margin-top: 50%;
+      }
+    }
+
+    .playerNum {
+      font-size: 12px;
+    }
+  }
+
+  .fixedGeneratorList {
+    width: 100%;
+    display: flex;
+
+    li {
+      box-sizing: border-box;
+      padding: 0 4px;
+      width: 20%;
+      flex: 1 1;
+      text-align: center;
+
+      img {
+        max-width: 100%;
+      }
+
+      .fixed {
+        background: rgba($iridescent, 0.5);
+        line-height: 0;
+        border-radius: 3px;
+      }
+
+      .nonfix {
+        background: rgba($none, 0.5);
+        line-height: 0;
+        border-radius: 3px;
+      }
+    }
+  }
+}
 </style>

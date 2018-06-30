@@ -1,7 +1,6 @@
 <template>
   <div>
     <app-header/>
-    <div class="appWrap">{{ message }}</div>
     <app-content/>
     <app-footer/>
   </div>
@@ -20,7 +19,6 @@ export default {
   },
   data() {
     return {
-      message: 'hogehgoge',
     };
   },
   mounted() {
