@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     reverseResults() {
-      return this.results.reverse();
+      return this.results.slice().reverse();
     },
     ...mapState({
       results: state => state.results.data,

@@ -29,7 +29,7 @@
         </dd>
         <dt>スコア：得点</dt>
         <dd>
-          <input type="number" v-model="result.score">
+          <input type="number" v-model.number="result.score">
         </dd>
         <dt>パーク</dt>
         <dd>
@@ -98,6 +98,8 @@
             </ul>
           </div>
           <div v-else>
+            <input type="number" v-model.number="inputUserRankRank">
+            <input type="number" v-model.number="inputUserRankPip">
             {{ result.played_user }}
           </div>
         </dd>
@@ -217,8 +219,57 @@ export default {
       const charactorType = this.isKiller ? 'killer' : 'survivor';
       return this.$store.getters['results/addedPipUserData']
         (this.obtainPip)[charactorType];
-    }
+    },
 
+    inputUserRankRank: {
+      get() {
+        if (!this.result || !this.result.played_user) {
+          return
+        }
+
+        return this.isKiller ? this.result.played_user.killer.rank
+          : this.result.played_user.survivor.rank;
+      },
+      set(value) {
+        const result = {};
+        result['key'] = 'played_user';
+        console.log(this.result)
+        const playedUserData = this.result.played_user;
+        if (this.isKiller) {
+          playedUserData['killer'].rank = value;
+        } else {
+          playedUserData['survivor'].rank = value;
+        }
+
+        result['value'] = playedUserData;
+        this.updateForm(result);
+      },
+    },
+
+    inputUserRankPip: {
+      get() {
+        if (!this.result || !this.result.played_user) {
+          return
+        }
+
+        return this.isKiller ? this.result.played_user.killer.pip
+          : this.result.played_user.survivor.pip;
+      },
+      set(value) {
+        const result = {};
+        result['key'] = 'played_user';
+
+        const playedUserData = this.result.played_user;
+        if (this.isKiller) {
+          playedUserData['killer'].pip = value;
+        } else {
+          playedUserData['survivor'].pip = value;
+        }
+
+        result['value'] = playedUserData;
+        this.updateForm(result);
+      },
+    },
   },
   methods: {
     onSubmit() {},
@@ -295,7 +346,13 @@ export default {
   destroyed() {
     console.log('destroyed', this.userRank)
     if (this.isCreate) {
-      this.updateForm({ key: 'played_user', value: this.userRank });
+      const value = this.result.last_played_user;
+      if (this.isKiller) {
+        value['killer'] = this.userRank;
+      } else {
+        value['survivor'] = this.userRank;
+      }
+      this.updateForm({ key: 'played_user', value: value });
     }
   }
 };
