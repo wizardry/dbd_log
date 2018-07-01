@@ -203,7 +203,7 @@ const results = {
     },
     [RESULTS_MUTATIONS_TYPE.CREATE](state) {
       const result = initResultTemplate();
-      result.id = state.data.length;
+      result.id = state.data.slice(-1)[0].id;
       result.created = new Date();
       result.update = new Date();
       result.date = new Date();
