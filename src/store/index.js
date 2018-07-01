@@ -203,10 +203,13 @@ const results = {
     },
     [RESULTS_MUTATIONS_TYPE.CREATE](state) {
       const result = initResultTemplate();
-      result.id = state.data.slice(-1)[0].id;
+      result.id = state.data.slice(-1)[0] !== undefined
+        ? parseInt(state.data.slice(-1)[0].id, 10) + 1 : 0;
       result.created = new Date();
       result.update = new Date();
       result.date = new Date();
+
+      console.log(result)
 
       // 使用キャラクター, 使用パークは最終データを引き継ぐ
       const lastResult = state.data.slice(-1)[0];
@@ -296,15 +299,23 @@ const results = {
 
     // create でしか使用しないためresult idは不要
     addedPipUserData: (state, getters) => pip => {
+      const resultId = state.data.slice(-1)[0].id;
       const selectedCharactor =
-        getters.getCharactor(state.data.slice(-1)[0].id);
+        getters.getCharactor(resultId);
+      console.log(state.data.slice(-1)[0].id)
       const userType = selectedCharactor.type;
       const rankData = state.data.length > 1
-        ? state.data.slice(-2)[0].played_user
+        ? JSON.parse(
+          JSON.stringify(
+            state.data.find(r => r.id === resultId).last_played_user
+          )
+        )
         : { survivor: { rank: 20, pip: 0 }, killer: { rank: 20, pip: 0 } };
 
-      rankData[userType].pip += pip;
+      rankData[userType].pip =
+        parseInt(rankData[userType].pip, 10) + parseInt(pip, 10);
 
+      console.log(rankData)
       let maxPip = 5;
 
       if (rankData[userType].rank > 12) {
@@ -314,11 +325,27 @@ const results = {
         maxPip = 3
       }
 
-      if (rankData[userType].pip > maxPip) {
-        rankData[userType].pip = rankData[userType].rank >= 1
-          ? rankData[userType].pip - maxPip : maxPip;
-        rankData[userType].rank = rankData[userType].rank >= 1
-          ? rankData[userType].rank - 1 : 1;
+      // ランク１でなければ
+      if (rankData[userType].rank > 1) {
+        // ランクが上がるケース
+        if (rankData[userType].pip > maxPip) {
+          rankData[userType].pip -= maxPip
+          rankData[userType].rank -= 1
+        // ランクが下がるケース
+        } else if (rankData[userType].pip < 0 && rankData[userType].rank > 20) {
+          rankData[userType].pip = maxPip - rankData[userType].pip
+          rankData[userType].rank += 1;
+        // 20が最下
+        } else if (
+          rankData[userType].pip < 0
+          && rankData[userType].rank <= 20
+        ) {
+          rankData[userType].rank = 20;
+          rankData[userType].pip = 0;
+        }
+      } else if (rankData[userType].pip > maxPip) {
+        // ランク１の場合pip上昇は5まで
+        rankData[userType].pip = maxPip
       }
 
       return rankData;
