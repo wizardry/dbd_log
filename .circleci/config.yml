@@ -46,13 +46,13 @@ jobs:
       - run: echo $GH_NAME
       - run: echo $CIRCLE_REPOSITORY_URL
       - run: echo $CIRCLE_SHA1
-      - run: echo $TARGET_BRANCH
+      - run: echo 'gh-pages'
       - run:
         command: git config --global user.email $GH_EMAIL
         command: git config --global user.name $GH_NAME
         command: git clone $CIRCLE_REPOSITORY_URL out
         command: cd out
-        command: git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
+        command: git checkout gh-pages || git checkout --orphan gh-pages
         command: git rm -rf .
         command: cd ..
         command: npm run build
@@ -67,7 +67,7 @@ jobs:
         command: cd out
         command: git add -A
         command: git commit --allow-empty
-        command: git push origin $TARGET_BRANCH
+        command: git push origin gh-pages
 workflows:
   version: 2
   build_and_deploy:
