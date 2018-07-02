@@ -43,42 +43,41 @@ jobs:
         name: Run tests
         command: npm test
     deploy:
-      steps:
-        run:
-          - add-ssh-keys:
-            fingerprints:
-              - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDE+ugJTRol/MfVrHE7NvmnhxngfvcHp2jhQyFlH+1z+3q8wyXQsys/+8HUEtbyFFOOwATUEGXvOPpmYp7KWtOOMQ0ZwKghA+zsvp4x79sQLt4drEUrjclvMdgTib8RMIpyUYK2D0DjKhNhLdvWq2OhAVJEOrbbLXZTxo7ADDMKbl+n7mFUKhDPfdwaDbYwROuYmEX92HMZ8PKyLX3qVGQdLdlSj5XWkUPypJXwdJKvWxwCRnpKqvsmDsramTop0GazzZ5amuqpJI5UJFHcGArgcjF0Tts8C3NH/p4NGM2PXIKQSl0R1Dic2hPXhHJLSfwvdhhEd8AirSCMtVK3hrix yumatakase_@R0277-MacBook-Air.local"
-        name: deploy
-        command: |
-          if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
-            git config --global user.email $GH_EMAIL
-            git config --global user.name $GH_NAME
+      name: deploy
+      run:
+        - add-ssh-keys:
+          fingerprints:
+            - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDE+ugJTRol/MfVrHE7NvmnhxngfvcHp2jhQyFlH+1z+3q8wyXQsys/+8HUEtbyFFOOwATUEGXvOPpmYp7KWtOOMQ0ZwKghA+zsvp4x79sQLt4drEUrjclvMdgTib8RMIpyUYK2D0DjKhNhLdvWq2OhAVJEOrbbLXZTxo7ADDMKbl+n7mFUKhDPfdwaDbYwROuYmEX92HMZ8PKyLX3qVGQdLdlSj5XWkUPypJXwdJKvWxwCRnpKqvsmDsramTop0GazzZ5amuqpJI5UJFHcGArgcjF0Tts8C3NH/p4NGM2PXIKQSl0R1Dic2hPXhHJLSfwvdhhEd8AirSCMtVK3hrix yumatakase_@R0277-MacBook-Air.local"
+      command: |
+        if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
+          git config --global user.email $GH_EMAIL
+          git config --global user.name $GH_NAME
 
-            git clone $CIRCLE_REPOSITORY_URL out
+          git clone $CIRCLE_REPOSITORY_URL out
 
-            cd out
-            git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
-            git rm -rf .
-            cd ..
+          cd out
+          git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
+          git rm -rf .
+          cd ..
 
-            npm run build
+          npm run build
 
-            mk build
-            mv dist/bundle.js ./build/bundle.js
-            mv src/html/dbd_log/images ./build/images
-            mv src/html/dbd_log/index.html ./build/index.html
+          mk build
+          mv dist/bundle.js ./build/bundle.js
+          mv src/html/dbd_log/images ./build/images
+          mv src/html/dbd_log/index.html ./build/index.html
 
-            rm -r src dist specs
-            rm .babelrc .editorconfig .eslintrc.js .prettierignore .stylelintr.json jest.config.js
+          rm -r src dist specs
+          rm .babelrc .editorconfig .eslintrc.js .prettierignore .stylelintr.json jest.config.js
 
-            cp -a build/. out/.
-            mkdir -p out/.circleci && cp -a .circleci/. out/.circleci/.
-            cd out
+          cp -a build/. out/.
+          mkdir -p out/.circleci && cp -a .circleci/. out/.circleci/.
+          cd out
 
-            git add -A
-            git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+          git add -A
+          git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
 
-            git push origin $TARGET_BRANCH
-          fi
+          git push origin $TARGET_BRANCH
+        fi
 
 
