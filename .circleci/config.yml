@@ -43,24 +43,22 @@ jobs:
             - "67:fc:6f:82:72:5c:a0:6e:d3:3e:f7:72:da:8d:64:e6"
       - run: git config --global user.name "wizardry"
       - run: git config --global user.email "rein1988@gmail.com"
+      - run: git config --global user.email $GH_EMAIL
+      - run: git config --global user.name $GH_NAME
+      - run: cd ~/public-repo
+      - run: git clone $CIRCLE_REPOSITORY_URL
+      - run: git checkout gh-pages || git checkout --orphan gh-pages
+      - run: cd ~/repo
+      - run: npm run build
+      - run: mk build
+      - run: mv dist/bundle.js ~/public-repo/bundle.js
+      - run: mv src/html/dbd_log/images ~/public-repo/images
+      - run: mv src/html/dbd_log/index.html ~/public-repo/index.html
+      - run: cd ~/public-repo
       - run:
-        command: git config --global user.email $GH_EMAIL
-        command: git config --global user.name $GH_NAME
-        command: cd ~/public-repo
-      - run:
-        command: git clone $CIRCLE_REPOSITORY_URL
-        command: git checkout gh-pages || git checkout --orphan gh-pages
-        command: cd ~/repo
-        command: npm run build
-        command: mk build
-        command: mv dist/bundle.js ~/public-repo/bundle.js
-        command: mv src/html/dbd_log/images ~/public-repo/images
-        command: mv src/html/dbd_log/index.html ~/public-repo/index.html
-        command: cd ~/public-repo
-      - run:
-        command: git add -A
-        command: git commit --allow-empty
-        command: git push origin gh-pages
+      - run: git add -A
+      - run: git commit --allow-empty
+      - run: git push origin gh-pages
 workflows:
   version: 2
   build_and_deploy:
