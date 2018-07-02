@@ -44,6 +44,7 @@ jobs:
         command: git config --global user.email $GH_EMAIL
         command: git config --global user.name $GH_NAME
         command: cd ~/public-repo
+        command: echo ls
         command: git clone $CIRCLE_REPOSITORY_URL
         command: git checkout gh-pages || git checkout --orphan gh-pages
         command: cd ~/repo
@@ -53,9 +54,10 @@ jobs:
         command: mv src/html/dbd_log/images ~/public-repo/images
         command: mv src/html/dbd_log/index.html ~/public-repo/index.html
         command: cd ~/public-repo
+        command: echo ls
         command: git add -A
         command: git commit --allow-empty
-        command: git push origin master gh-pages
+        command: git push origin gh-pages
 workflows:
   version: 2
   build_and_deploy:
