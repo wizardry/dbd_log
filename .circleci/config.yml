@@ -40,6 +40,9 @@ jobs:
     steps:
       - run: git config --global user.name "wizardry"
       - run: git config --global user.email "rein1988@gmail.com"
+      - add_ssh_keys:
+          fingerprints:
+            - "67:fc:6f:82:72:5c:a0:6e:d3:3e:f7:72:da:8d:64:e6"
       - run:
         command: git config --global user.email $GH_EMAIL
         command: git config --global user.name $GH_NAME
