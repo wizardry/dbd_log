@@ -47,7 +47,7 @@ jobs:
       - run: git config --global user.name $GH_NAME
       - run: cd ~/public-repo
       - run: git clone $CIRCLE_REPOSITORY_URL
-      - run: git checkout gh-pages || git checkout --orphan gh-pages
+      - run: git checkout gh-pages
       - run: cd ~/repo
       - run: npm run build
       - run: mk build
