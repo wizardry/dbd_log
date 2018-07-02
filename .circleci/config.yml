@@ -49,7 +49,20 @@ jobs:
       - run: cd ~/public-repo
       - run: git clone $CIRCLE_REPOSITORY_URL
       - run: echo $CIRCLE_REPOSITORY_URL
-      - run: cd dbd_log
+      - run: cd ~/public-repo/dbd_log
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm install
       - run: npm run build
       - run: mv dist/bundle.js ~/gh-pages_bk/bundle.js
       - run: mv src/html/dbd_log/images ~/gh-pages_bk/images
