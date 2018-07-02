@@ -45,7 +45,7 @@ export default {
     },
 
     getEmblemImagePath(type) {
-      return `../../images/${type}_em_ic.png`
+      return `/dbd_log/images/${type}_em_ic.png`
     },
   },
   computed: {

@@ -60,7 +60,7 @@
           <ul class="fixedGeneratorList">
             <li v-for="count in [1, 2, 3, 4, 5]" :key="count"  @click="onClickFixedGenerator(count)">
               <div :class="fixedGeneratorClass(count)">
-                <img src="/images/generators.png">
+                <img src="/dbd_log/images/generators.png">
               </div>
             </li>
           </ul>
@@ -285,7 +285,7 @@ export default {
     },
 
     getEmblemImagePath(type) {
-      return `../../images/${type}_em_ic.png`
+      return `/dbd_log/images/${type}_em_ic.png`
     },
 
     getPark(parkId) {
@@ -316,7 +316,7 @@ export default {
     },
 
     getStatusImagePath(status) {
-      return `../../images/status_${SURVIVOR_STATUS_IMAGE[status]}.png`
+      return `/dbd_log/images/status_${SURVIVOR_STATUS_IMAGE[status]}.png`
     },
 
     onClickFixedGenerator(count) {
