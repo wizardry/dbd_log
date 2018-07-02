@@ -55,7 +55,6 @@ jobs:
       - run: mv src/html/dbd_log/images ~/public-repo/images
       - run: mv src/html/dbd_log/index.html ~/public-repo/index.html
       - run: cd ~/public-repo
-      - run:
       - run: git add -A
       - run: git commit --allow-empty
       - run: git push origin gh-pages
