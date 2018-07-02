@@ -45,18 +45,21 @@ jobs:
       - run: git config --global user.email "rein1988@gmail.com"
       - run: git config --global user.email $GH_EMAIL
       - run: git config --global user.name $GH_NAME
+      - run: mkdir ~/gh-pages_bk
       - run: cd ~/public-repo
       - run: git clone $CIRCLE_REPOSITORY_URL
       - run: echo $CIRCLE_REPOSITORY_URL
+      - run: cd dbd_log
+      - run: npm run build
+      - run: mv dist/bundle.js ~/gh-pages_bk/bundle.js
+      - run: mv src/html/dbd_log/images ~/gh-pages_bk/images
+      - run: mv src/html/dbd_log/index.html ~/gh-pages_bk/index.html
       - run: git fetch
       - run: git checkout gh-pages
-      - run: cd ~/repo
-      - run: npm run build
-      - run: mk build
-      - run: mv dist/bundle.js ~/public-repo/bundle.js
-      - run: mv src/html/dbd_log/images ~/public-repo/images
-      - run: mv src/html/dbd_log/index.html ~/public-repo/index.html
-      - run: cd ~/public-repo
+      - run: rm -rf ~/public-repo/dbd_log/
+      - run: mv ~/gh-pages_bk/bundle.js ~/public-repo/dbd_log/bundle.js
+      - run: mv ~/gh-pages_bk/images ~/public-repo/dbd_log/images
+      - run: mv ~/gh-pages_bk/index.html ~/public-repo/dbd_log/index.html
       - run: git add -A
       - run: git commit --allow-empty
       - run: git push origin gh-pages
