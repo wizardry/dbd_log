@@ -18,7 +18,8 @@ jobs:
 
     steps:
       - checkout
-
+      - run: git config --global user.name "wizardry"
+      - run: git config --global user.email "rein1988@gmail.com"
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -38,6 +39,8 @@ jobs:
   deploy:
     docker:
       - image: circleci/node:7.10
+    working_directory: ~/public-repo
+    machine: true
     steps:
       - run:
         - add-ssh-keys:
@@ -67,3 +70,14 @@ jobs:
             git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
             git push origin $TARGET_BRANCH
           fi
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
