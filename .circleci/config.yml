@@ -37,8 +37,6 @@ jobs:
       # run tests!
       - run: npm run test
   deploy:
-    docker:
-      - image: circleci/node:7.10
     working_directory: ~/public-repo
     machine: true
     steps:
